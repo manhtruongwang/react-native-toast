@@ -14,6 +14,7 @@ export type IConfigToast = {
   textBody?: string;
   titleStyle?: StyleProp<TextStyle>;
   textBodyStyle?: StyleProp<TextStyle>;
+  paddingTop?: number;
   onPress?: () => void;
   onShow?: () => void;
   onHide?: () => void;
@@ -90,7 +91,7 @@ export class Toast extends React.Component<IProps, IState> {
     const { isDark, config: configGeneral } = this.props;
     return (
       <SafeAreaInsetsContext.Consumer>
-        {(insets) => <ToastRender {...data} isDark={isDark} paddingTop={insets?.top} configGeneral={configGeneral} onClose={this._closedHandler} />}
+        {(insets) => <ToastRender {...data} isDark={isDark} paddingTop={data.paddingTop ?? insets?.top} configGeneral={configGeneral} onClose={this._closedHandler} />}
       </SafeAreaInsetsContext.Consumer>
     );
   }

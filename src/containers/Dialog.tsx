@@ -8,9 +8,13 @@ export type IConfigDialog = {
   title?: string;
   textBody?: string;
   button?: string;
+  cancelButton?: string;
+  confirmButton?: string;
   autoClose?: number | boolean;
   closeOnOverlayTap?: boolean;
   onPressButton?: () => void;
+  onPressCancel?: () => void;
+  onPressConfirm?: () => void;
   onShow?: () => void;
   onHide?: () => void;
 };
@@ -178,7 +182,9 @@ export class Dialog extends React.Component<IProps, IState> {
    */
   private _buttonRender = (): JSX.Element => {
     const { styles } = this.state;
-    const { type, onPressButton, button } = this.state.config!;
+    const { type, onPressButton, button, cancelButton, confirmButton, onPressCancel, onPressConfirm } = this.state.config!;
+
+    // If using the legacy single button approach
     if (button) {
       return (
         <TouchableOpacity style={StyleSheet.flatten([styles.button, styles[type]])} onPress={onPressButton ?? this._close}>
@@ -186,6 +192,25 @@ export class Dialog extends React.Component<IProps, IState> {
         </TouchableOpacity>
       );
     }
+
+    // If using the new cancel/confirm buttons
+    if (cancelButton || confirmButton) {
+      return (
+        <View style={styles.buttonsContainer}>
+          {cancelButton && (
+            <TouchableOpacity style={StyleSheet.flatten([styles.button, styles.cancelButton])} onPress={onPressCancel ?? this._close}>
+              <Text style={styles.cancelButtonLabel}>{cancelButton}</Text>
+            </TouchableOpacity>
+          )}
+          {confirmButton && (
+            <TouchableOpacity style={StyleSheet.flatten([styles.button, styles[type]])} onPress={onPressConfirm ?? this._close}>
+              <Text style={styles.buttonLabel}>{confirmButton}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      );
+    }
+
     return <></>;
   };
 
@@ -242,7 +267,13 @@ export class Dialog extends React.Component<IProps, IState> {
     const { visible, styles } = this.state;
     const { _OverlayCloseRender, _CardRender } = this;
     return (
-      <Modal transparent={true} visible={visible} animated={false} onShow={this._showModalHandler}>
+      <Modal
+        transparent={true}
+        supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
+        visible={visible}
+        animated={false}
+        onShow={this._showModalHandler}
+      >
         <Animated.View style={StyleSheet.flatten([styles.backgroundContainer, { opacity: this._opacity }])} />
         <_OverlayCloseRender />
         <_CardRender />
@@ -287,6 +318,11 @@ const __styles = (isDark: boolean) =>
       textAlign: 'center',
       color: Color.get('label', isDark),
     },
+    buttonsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginTop: 12,
+    },
     button: {
       borderRadius: 50,
       height: 40,
@@ -295,6 +331,17 @@ const __styles = (isDark: boolean) =>
       alignItems: 'center',
       alignSelf: 'center',
       marginTop: 12,
+      marginHorizontal: 8,
+    },
+    cancelButton: {
+      backgroundColor: '#DDDDDD',
+      borderWidth: 1,
+      borderColor: '#CCCCCC',
+    },
+    cancelButtonLabel: {
+      color: isDark ? '#FFFFFF' : '#555555',
+      fontWeight: 'bold',
+      fontSize: 16,
     },
     buttonLabel: {
       color: '#fff',

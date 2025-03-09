@@ -1,23 +1,23 @@
-# react-native-alert-notification
+# react-native-alert-dialog
 
 ## Example Dialog Box
 
-|                                                                             Theme Light                                                                              |                                                                             Theme Dark                                                                             |
-| :------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="https://github.com/CodingByJerez/react-native-alert-notification/blob/master/.github/images/dialog-light.gif?raw=true" height="350" alt="Dialogs light" /> | <img src="https://github.com/CodingByJerez/react-native-alert-notification/blob/master/.github/images/dialog-dark.gif?raw=true" height="350" alt="Dialogs Dark" /> |
+|                                                                           Theme Light                                                                           |                                                                          Theme Dark                                                                           |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://github.com/manhtruongwang/react-native-toast-dialog/blob/master/.github/images/dialog-light.gif?raw=true" height="350" alt="Dialogs light" /> | <img src="https://github.com/manhtruongwang/react-native-toast-dialog/blob/master/.github/images/dialog-dark.gif?raw=true" height="350" alt="Dialogs Dark" /> |
 
 ## Example Toast Notification
 
-|                                                                            Theme Light                                                                             |                                                                            Theme Dark                                                                            |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="https://github.com/CodingByJerez/react-native-alert-notification/blob/master/.github/images/toast-light.gif?raw=true" height="350" alt="toasts light" /> | <img src="https://github.com/CodingByJerez/react-native-alert-notification/blob/master/.github/images/toast-dark.gif?raw=true" height="350" alt="toasts Dark" /> |
+|                                                                          Theme Light                                                                          |                                                                         Theme Dark                                                                          |
+| :-----------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://github.com/manhtruongwang/react-native-toast-dialog/blob/master/.github/images/toast-light.gif?raw=true" height="350" alt="toasts light" /> | <img src="https://github.com/manhtruongwang/react-native-toast-dialog/blob/master/.github/images/toast-dark.gif?raw=true" height="350" alt="toasts Dark" /> |
 
 ## Installation
 
 ### - Installing:
 
 ```sh
-yarn add react-native-alert-notification
+yarn add react-native-alert-dialog
 ```
 
 ### - Installing dependencies:
@@ -43,7 +43,7 @@ import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-a
 
 <AlertNotificationRoot>
   <View>
-    // dialog box
+    // dialog box with single button
     <Button
       title={'dialog box'}
       onPress={() =>
@@ -55,6 +55,21 @@ import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-a
         })
       }
     />
+    // dialog box with cancel & confirm buttons
+    <Button
+      title={'confirmation dialog'}
+      onPress={() =>
+        Dialog.show({
+          type: ALERT_TYPE.WARNING,
+          title: 'Confirm Action',
+          textBody: 'Are you sure you want to proceed with this action?',
+          cancelButton: 'Cancel',
+          confirmButton: 'Proceed',
+          onPressCancel: () => console.log('Action cancelled'),
+          onPressConfirm: () => console.log('Action confirmed'),
+        })
+      }
+    />
     // toast notification
     <Button
       title={'toast notification'}
@@ -63,6 +78,7 @@ import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-a
           type: ALERT_TYPE.SUCCESS,
           title: 'Success',
           textBody: 'Congrats! this is toast notification success',
+          paddingTop: 45, // custom top padding
         })
       }
     />
@@ -108,9 +124,13 @@ type IColors = {
 | type              | Defines the type ("Success", "Warning" or "Error") | true    |         | "SUCCESS", "DANGER", "WARNING" |
 | textBody          | The text body                                      |         |         | String                         |
 | button            | name button (for hide button: undefined)           |         |         | String                         |
+| cancelButton      | Text for cancel button in dual-button layout       |         |         | String                         |
+| confirmButton     | Text for confirm button in dual-button layout      |         |         | String                         |
 | autoClose         | Defines time auto close dialog box in ms           |         | face    | bool / number                  |
 | closeOnOverlayTap | allow close if click in overlay                    |         | true    | bool                           |
 | onPressButton     | (if not declared and isset button action is close) |         | String  | () => void                     |
+| onPressCancel     | Action when cancel button is pressed               |         |         | () => void                     |
+| onPressConfirm    | Action when confirm button is pressed              |         |         | () => void                     |
 | onShow            | action after end animation open                    |         |         | () => void                     |
 | onHide            | action after end animation close                   |         |         | () => void                     |
 
@@ -120,9 +140,13 @@ type IConfig = {
   title?: string;
   textBody?: string;
   button?: string;
+  cancelButton?: string;
+  confirmButton?: string;
   autoClose?: number | boolean;
   closeOnOverlayTap?: boolean;
   onPressButton?: () => void;
+  onPressCancel?: () => void;
+  onPressConfirm?: () => void;
   onShow?: () => void;
   onHide?: () => void;
 };
@@ -130,15 +154,16 @@ type IConfig = {
 
 ### Toast Notification Component
 
-| Name      | Description                                        | Require | Default | Type                           |
-| --------- | -------------------------------------------------- | ------- | ------- | ------------------------------ |
-| title     | The title text                                     |         |         | String                         |
-| type      | Defines the type ("Success", "Warning" or "Error") |         |         | "SUCCESS", "DANGER", "WARNING" |
-| textBody  | The text body                                      |         |         | String                         |
-| autoClose | Defines time auto close dialog box in ms           |         | 5000    | bool / number                  |
-| onPress   | action click in card                               |         |         | bool                           |
-| onShow    | event after end animation open                     |         |         | () => void                     |
-| onHide    | event after end animation close                    |         |         | () => void                     |
+| Name       | Description                                        | Require | Default | Type                           |
+| ---------- | -------------------------------------------------- | ------- | ------- | ------------------------------ |
+| title      | The title text                                     |         |         | String                         |
+| type       | Defines the type ("Success", "Warning" or "Error") |         |         | "SUCCESS", "DANGER", "WARNING" |
+| textBody   | The text body                                      |         |         | String                         |
+| autoClose  | Defines time auto close dialog box in ms           |         | 5000    | bool / number                  |
+| paddingTop | Specify custom top padding                         |         | 0       | number                         |
+| onPress    | action click in card                               |         |         | bool                           |
+| onShow     | event after end animation open                     |         |         | () => void                     |
+| onHide     | event after end animation close                    |         |         | () => void                     |
 
 ```ts
 type IConfig = {
@@ -146,6 +171,7 @@ type IConfig = {
   title?: string;
   textBody?: string;
   autoClose?: number | boolean;
+  paddingTop?: number;
   titleStyle?: StyleProp<TextStyle>;
   textBodyStyle?: StyleProp<TextStyle>;
   onPress?: () => void;
@@ -166,9 +192,9 @@ Toast.hide();
 
 ## Author
 
-Rodolphe Jerez | [https://codingbyjerez.com](https://codingbyjerez.com)
+Truong Quang Manh | [https://vietgigs.vn](https://vietgigs.vn)
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+See the contributing guide to learn how to contribute to the repository and the development workflow.
 
 ## License
 
